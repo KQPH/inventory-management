@@ -13,6 +13,11 @@ import {
   getDoc,
 } from 'firebase/firestore'
 
+interface inventoryItem {
+  name: string
+  [key: string]: any // To accommodate any additional fields in the doc.data()
+}
+
 const style = {
   position: 'absolute',
   top: '50%',
@@ -29,10 +34,26 @@ const style = {
 }
 
 export default function Home() {
-  const [inventory, setInventory] = useState([])
+  const [inventory, setInventory] = useState<inventoryItem[]>([])
   const [open, setOpen] = useState(false)
   const [itemName, setItemName] = useState('')
-  
+
+  const updateInventory = async () => {
+    const snapshot = query(collection(firestore, 'inventory'))
+    const docs = await getDocs(snapshot)
+    const inventoryList: inventoryItem[] = []
+
+    docs.forEach((doc) => {
+      inventoryList.push({ name: doc.id, ...doc.data() })
+    })
+
+    setInventory(inventoryList)
+  }
+
+  useEffect(() => {
+    updateInventory()
+  }, [])
+
   return (
     <Box>
       <Typography variant="h1">Inventory Management</Typography>
