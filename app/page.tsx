@@ -44,7 +44,10 @@ export default function Home() {
     const inventoryList: inventoryItem[] = []
 
     docs.forEach((doc) => {
-      inventoryList.push({ name: doc.id, ...doc.data() })
+      inventoryList.push({
+        name: doc.id,
+        ...doc.data()
+      })
     })
 
     setInventory(inventoryList)
